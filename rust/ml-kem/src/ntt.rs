@@ -121,8 +121,9 @@ pub fn multiply_ntts(
 ) -> [FieldElement; 256] {
     let mut h_hat = [FieldElement::ZERO; 256];
     for i in 0..64 {
-        let gamma_exp = (2 * bitrev7(i as u8) as u32) + 1;
-        let gamma = FieldElement::new(pow_mod(17, gamma_exp, Q as u32) as u16);
+        // gamma = ZETAS[64 + i], which matches the root used in the last
+        // NTT butterfly layer for pair (4i, 4i+1).
+        let gamma = FieldElement::new(ZETAS[64 + i]);
 
         let (c0, c1) = base_case_multiply(
             f_hat[4 * i],
@@ -298,6 +299,29 @@ mod tests {
         let ba = multiply_ntts(&b, &a);
         for i in 0..256 {
             assert_eq!(ab[i].value(), ba[i].value(), "not commutative at {i}");
+        }
+    }
+
+    #[test]
+    fn test_poly_multiply_simple() {
+        // (1 + X) * (1 + X) = 1 + 2X + X^2 mod (X^256 + 1)
+        let mut a = [FieldElement::ZERO; 256];
+        a[0] = FieldElement::ONE;
+        a[1] = FieldElement::ONE;
+        let mut b = [FieldElement::ZERO; 256];
+        b[0] = FieldElement::ONE;
+        b[1] = FieldElement::ONE;
+
+        ntt(&mut a);
+        ntt(&mut b);
+        let mut result = multiply_ntts(&a, &b);
+        ntt_inverse(&mut result);
+
+        assert_eq!(result[0].value(), 1, "coeff 0");
+        assert_eq!(result[1].value(), 2, "coeff 1");
+        assert_eq!(result[2].value(), 1, "coeff 2");
+        for i in 3..256 {
+            assert_eq!(result[i].value(), 0, "coeff {i} should be 0, got {}", result[i].value());
         }
     }
 
