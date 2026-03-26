@@ -1,0 +1,20 @@
+[package]
+name = "ml-dsa"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Pure Rust implementation of ML-DSA (FIPS 204)"
+
+[dependencies]
+sha3 = { version = "0.10", default-features = false }
+rand_core = { version = "0.6", default-features = false }
+subtle = { version = "2.6", default-features = false }
+zeroize = { version = "1.8", default-features = false, features = ["zeroize_derive"] }
+
+[dev-dependencies]
+rand = "0.8"
+hex = "0.4"
+
+[features]
+default = []
+std = ["sha3/std"]

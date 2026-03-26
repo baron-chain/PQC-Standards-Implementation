@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "pqc-common",
     "ml-kem",
+    "ml-dsa",
 ]
 
 [workspace.package]
