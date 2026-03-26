@@ -1,0 +1,17 @@
+{
+  "name": "@pqc/ml-kem",
+  "version": "0.1.0",
+  "description": "Pure JavaScript implementation of ML-KEM (FIPS 203)",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
