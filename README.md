@@ -7,7 +7,7 @@ Pure implementations of NIST Post-Quantum Cryptography standards across multiple
 | Standard | Algorithm | Type | Status |
 |----------|-----------|------|--------|
 | **FIPS 203** | ML-KEM (Kyber) | Key Encapsulation | ✅ All languages |
-| **FIPS 204** | ML-DSA (Dilithium) | Digital Signature | Planned |
+| **FIPS 204** | ML-DSA (Dilithium) | Digital Signature | ✅ All languages |
 | **FIPS 205** | SLH-DSA (SPHINCS+) | Hash-Based Signature | Planned |
 | Hybrid KEMs | X25519MLKEM768, X-Wing | Hybrid Key Exchange | Planned |
 | Composite Sigs | ML-DSA + Ed25519/ECDSA | Hybrid Signatures | Planned |
@@ -17,11 +17,11 @@ Pure implementations of NIST Post-Quantum Cryptography standards across multiple
 
 | Language | ML-KEM | ML-DSA | SLH-DSA | Hybrid | TLS |
 |----------|--------|--------|---------|--------|-----|
-| Rust     | ✅     | -      | -       | -      | -   |
-| Go       | ✅     | -      | -       | -      | -   |
-| JS/TS    | ✅     | -      | -       | -      | -   |
-| Python   | ✅     | -      | -       | -      | -   |
-| Java     | ✅     | -      | -       | -      | -   |
+| Rust     | ✅     | ✅     | -       | -      | -   |
+| Go       | ✅     | ✅     | -       | -      | -   |
+| JS/TS    | ✅     | ✅     | -       | -      | -   |
+| Python   | ✅     | ✅     | -       | -      | -   |
+| Java     | ✅     | ✅     | -       | -      | -   |
 
 ## ML-KEM — Complete (All Languages)
 
@@ -51,7 +51,8 @@ assert_eq!(ss, recovered);
 PQC-Standards-Implementation/
 ├── rust/           # Rust implementations
 │   ├── pqc-common/ # Shared field arithmetic
-│   └── ml-kem/     # ML-KEM (FIPS 203)
+│   ├── ml-kem/     # ML-KEM (FIPS 203)
+│   └── ml-dsa/     # ML-DSA (FIPS 204)
 ├── go/             # Go implementations
 ├── js/             # JavaScript (ES modules, Node.js 20+)
 ├── python/         # Python implementations (3.10+)
