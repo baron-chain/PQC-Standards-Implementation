@@ -55,7 +55,7 @@ export function byteDecode(d, B) {
       val |= ((B[byteIdx] >> bitIdx) & 1) << j;
       bitPos++;
     }
-    F[i] = (d === 12) ? val % Q : val;
+    F[i] = val;
   }
   return F;
 }
