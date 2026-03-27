@@ -35,3 +35,6 @@ java/target/
 Thumbs.db
 php/vendor/
 swift/.build/
+dotnet/**/bin/
+dotnet/**/obj/
+php/.phpunit.result.cache
