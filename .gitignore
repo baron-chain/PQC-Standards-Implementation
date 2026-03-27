@@ -34,3 +34,4 @@ java/target/
 .DS_Store
 Thumbs.db
 php/vendor/
+swift/.build/
