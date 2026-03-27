@@ -14,7 +14,12 @@ zeroize = { version = "1.8", default-features = false, features = ["zeroize_deri
 [dev-dependencies]
 rand = "0.8"
 hex = "0.4"
+criterion = { version = "0.5", features = ["html_reports"] }
 
 [features]
 default = []
 std = ["sha3/std"]
+
+[[bench]]
+name = "ml_dsa_bench"
+harness = false
