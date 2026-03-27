@@ -1,6 +1,6 @@
 {
   "name": "@pqc/standards",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pure JavaScript implementations of ML-KEM, ML-DSA, SLH-DSA (FIPS 203/204/205)",
   "type": "module",
   "sideEffects": false,
