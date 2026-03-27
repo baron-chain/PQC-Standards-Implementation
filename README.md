@@ -8,7 +8,7 @@ Pure implementations of NIST Post-Quantum Cryptography standards across multiple
 |----------|-----------|------|--------|
 | **FIPS 203** | ML-KEM (Kyber) | Key Encapsulation | ✅ All languages |
 | **FIPS 204** | ML-DSA (Dilithium) | Digital Signature | ✅ All languages |
-| **FIPS 205** | SLH-DSA (SPHINCS+) | Hash-Based Signature | Planned |
+| **FIPS 205** | SLH-DSA (SPHINCS+) | Hash-Based Signature | ✅ All languages |
 | Hybrid KEMs | X25519MLKEM768, X-Wing | Hybrid Key Exchange | Planned |
 | Composite Sigs | ML-DSA + Ed25519/ECDSA | Hybrid Signatures | Planned |
 | TLS 1.3 | Integration layer | Protocol Integration | Planned |
@@ -17,11 +17,11 @@ Pure implementations of NIST Post-Quantum Cryptography standards across multiple
 
 | Language | ML-KEM | ML-DSA | SLH-DSA | Hybrid | TLS |
 |----------|--------|--------|---------|--------|-----|
-| Rust     | ✅     | ✅     | -       | -      | -   |
-| Go       | ✅     | ✅     | -       | -      | -   |
-| JS/TS    | ✅     | ✅     | -       | -      | -   |
-| Python   | ✅     | ✅     | -       | -      | -   |
-| Java     | ✅     | ✅     | -       | -      | -   |
+| Rust     | ✅     | ✅     | ✅      | -      | -   |
+| Go       | ✅     | ✅     | ✅      | -      | -   |
+| JS/TS    | ✅     | ✅     | ✅      | -      | -   |
+| Python   | ✅     | ✅     | ✅      | -      | -   |
+| Java     | ✅     | ✅     | ✅      | -      | -   |
 
 ## ML-KEM — Complete (All Languages)
 
