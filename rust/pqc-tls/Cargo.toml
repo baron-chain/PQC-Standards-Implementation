@@ -1,0 +1,18 @@
+[package]
+name = "pqc-tls"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "PQC cipher suite / named group integration layer for TLS 1.3"
+
+[dependencies]
+ml-kem = { path = "../ml-kem" }
+ml-dsa = { path = "../ml-dsa" }
+hybrid-kem = { path = "../hybrid-kem" }
+composite-sig = { path = "../composite-sig" }
+rand_core = { version = "0.6", default-features = false }
+sha3 = { workspace = true }
+digest = { workspace = true }
+
+[dev-dependencies]
+rand = { workspace = true }
