@@ -3,7 +3,7 @@ package compress
 import (
 	"testing"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 )
 
 func TestCompressRange(t *testing.T) {

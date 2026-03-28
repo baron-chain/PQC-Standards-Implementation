@@ -3,41 +3,47 @@ namespace PqcStandards.SlhDsa;
 /// <summary>FORS (Forest of Random Subsets) for SLH-DSA.</summary>
 public static class Fors
 {
-    /// <summary>Generate FORS secret key value.</summary>
+    /// <summary>Generate FORS secret key value (ForsPRF address type).</summary>
     public static byte[] SkGen(IHashSuite hash, byte[] pkSeed, byte[] skSeed, Address adrs, int idx, int n)
     {
-        adrs.SetType(Address.ForsTree);
-        adrs.SetTreeHeight(0);
-        adrs.SetTreeIndex(idx);
-        return hash.Prf(pkSeed, skSeed, adrs, n);
+        var skAdrs = adrs.Copy();
+        skAdrs.SetType(Address.ForsCompress);  // ForsPRF = 6; zeroes bytes 20-31
+        skAdrs.SetKeyPairAddress(adrs.GetKeyPairAddress());  // restore from original
+        skAdrs.SetTreeIndex(idx);
+        return hash.Prf(pkSeed, skSeed, skAdrs, n);
     }
 
-    /// <summary>Compute node in FORS tree.</summary>
+    /// <summary>Compute node at (idx, height) in FORS tree. Does not mutate adrs.</summary>
     public static byte[] Node(IHashSuite hash, byte[] pkSeed, byte[] skSeed, int idx, int height, Address adrs, SlhParams p)
     {
+        int kp = adrs.GetKeyPairAddress();
         if (height == 0)
         {
             byte[] sk = SkGen(hash, pkSeed, skSeed, adrs, idx, p.N);
-            adrs.SetType(Address.ForsTree);
-            adrs.SetTreeHeight(0);
-            adrs.SetTreeIndex(idx);
-            return hash.F(pkSeed, adrs, sk, p.N);
+            var nodeAdrs = adrs.Copy();
+            nodeAdrs.SetType(Address.ForsTree);
+            nodeAdrs.SetKeyPairAddress(kp);
+            nodeAdrs.SetTreeHeight(0);
+            nodeAdrs.SetTreeIndex(idx);
+            return hash.F(pkSeed, nodeAdrs, sk, p.N);
         }
 
-        byte[] left = Node(hash, pkSeed, skSeed, 2 * idx, height - 1, adrs, p);
+        byte[] left  = Node(hash, pkSeed, skSeed, 2 * idx,     height - 1, adrs, p);
         byte[] right = Node(hash, pkSeed, skSeed, 2 * idx + 1, height - 1, adrs, p);
 
-        adrs.SetType(Address.ForsTree);
-        adrs.SetTreeHeight(height);
-        adrs.SetTreeIndex(idx);
-        return hash.H(pkSeed, adrs, left, right, p.N);
+        var nodeAdrs2 = adrs.Copy();
+        nodeAdrs2.SetType(Address.ForsTree);
+        nodeAdrs2.SetKeyPairAddress(kp);
+        nodeAdrs2.SetTreeHeight(height);
+        nodeAdrs2.SetTreeIndex(idx);
+        return hash.H(pkSeed, nodeAdrs2, left, right, p.N);
     }
 
-    /// <summary>FORS signature: k secret values + k authentication paths.</summary>
+    /// <summary>FORS signature: K secret values + K authentication paths of length A.</summary>
     public static (byte[][] sks, byte[][][] authPaths) Sign(IHashSuite hash, byte[] pkSeed, byte[] skSeed, byte[] md, Address adrs, SlhParams p)
     {
-        int k = p.A;
-        int a = p.K; // log of number of leaves per tree
+        int k = p.K;  // number of FORS trees
+        int a = p.A;  // FORS tree height
 
         int[] indices = MessageToIndices(md, k, a);
 
@@ -47,13 +53,17 @@ public static class Fors
         for (int i = 0; i < k; i++)
         {
             int baseIdx = i * (1 << a);
-            sks[i] = SkGen(hash, pkSeed, skSeed, adrs, baseIdx + indices[i], p.N);
+            int leafIdx = indices[i];
+            sks[i] = SkGen(hash, pkSeed, skSeed, adrs, baseIdx + leafIdx, p.N);
 
             authPaths[i] = new byte[a][];
+            int s = leafIdx;
             for (int j = 0; j < a; j++)
             {
-                int sibIdx = ((baseIdx + indices[i]) >> j) ^ 1;
-                authPaths[i][j] = Node(hash, pkSeed, skSeed, sibIdx, j, adrs, p);
+                // Global sibling index at height j: i*(1<<(a-j)) + ((idx>>j)^1)
+                int globalSibling = i * (1 << (a - j)) + (s ^ 1);
+                authPaths[i][j] = Node(hash, pkSeed, skSeed, globalSibling, j, adrs, p);
+                s >>= 1;
             }
         }
 
@@ -63,9 +73,10 @@ public static class Fors
     /// <summary>Compute FORS public key from signature.</summary>
     public static byte[] PkFromSig(IHashSuite hash, byte[] pkSeed, byte[][] sks, byte[][][] authPaths, byte[] md, Address adrs, SlhParams p)
     {
-        int k = p.A;
-        int a = p.K;
+        int k = p.K;  // number of FORS trees
+        int a = p.A;  // FORS tree height
         int n = p.N;
+        int kp = adrs.GetKeyPairAddress();
 
         int[] indices = MessageToIndices(md, k, a);
         byte[][] roots = new byte[k][];
@@ -73,40 +84,40 @@ public static class Fors
         for (int i = 0; i < k; i++)
         {
             int baseIdx = i * (1 << a);
-            // Leaf from secret value
-            adrs.SetType(Address.ForsTree);
-            adrs.SetTreeHeight(0);
-            adrs.SetTreeIndex(baseIdx + indices[i]);
-            byte[] node = hash.F(pkSeed, adrs, sks[i], n);
+            int leafIdx = indices[i];
+            int absIdx  = baseIdx + leafIdx;
 
-            // Walk up tree
-            int curIdx = baseIdx + indices[i];
+            var nodeAdrs = adrs.Copy();
+            nodeAdrs.SetType(Address.ForsTree);
+            nodeAdrs.SetKeyPairAddress(kp);
+            nodeAdrs.SetTreeHeight(0);
+            nodeAdrs.SetTreeIndex(absIdx);
+            byte[] node = hash.F(pkSeed, nodeAdrs, sks[i], n);
+
+            int s = leafIdx;
             for (int j = 0; j < a; j++)
             {
-                adrs.SetTreeHeight(j + 1);
-                if ((curIdx & 1) == 0)
-                {
-                    adrs.SetTreeIndex(curIdx >> 1);
-                    node = hash.H(pkSeed, adrs, node, authPaths[i][j], n);
-                }
+                nodeAdrs.SetTreeHeight(j + 1);
+                nodeAdrs.SetTreeIndex(absIdx >> (j + 1));
+                if (s % 2 == 0)
+                    node = hash.H(pkSeed, nodeAdrs, node, authPaths[i][j], n);
                 else
-                {
-                    adrs.SetTreeIndex(curIdx >> 1);
-                    node = hash.H(pkSeed, adrs, authPaths[i][j], node, n);
-                }
-                curIdx >>= 1;
+                    node = hash.H(pkSeed, nodeAdrs, authPaths[i][j], node, n);
+                s >>= 1;
             }
             roots[i] = node;
         }
 
-        // Compress roots
-        adrs.SetType(Address.ForsPk);
+        var forsRootsAdrs = adrs.Copy();
+        forsRootsAdrs.SetType(Address.ForsPk);
+        forsRootsAdrs.SetKeyPairAddress(kp);
         byte[] concat = new byte[k * n];
         for (int i = 0; i < k; i++)
             Buffer.BlockCopy(roots[i], 0, concat, i * n, n);
-        return hash.Tl(pkSeed, adrs, concat, n);
+        return hash.Tl(pkSeed, forsRootsAdrs, concat, n);
     }
 
+    /// <summary>Extract k indices of a bits each from md (MSB-first bit order).</summary>
     private static int[] MessageToIndices(byte[] md, int k, int a)
     {
         int[] indices = new int[k];
@@ -116,13 +127,13 @@ public static class Fors
             int val = 0;
             for (int b = 0; b < a; b++)
             {
-                int byteIdx = (bitPos + b) / 8;
-                int bitIdx = (bitPos + b) % 8;
+                int byteIdx = bitPos / 8;
+                int bitIdx  = 7 - (bitPos % 8);  // MSB first
                 if (byteIdx < md.Length)
-                    val |= ((md[byteIdx] >> bitIdx) & 1) << b;
+                    val = (val << 1) | ((md[byteIdx] >> bitIdx) & 1);
+                bitPos++;
             }
             indices[i] = val;
-            bitPos += a;
         }
         return indices;
     }

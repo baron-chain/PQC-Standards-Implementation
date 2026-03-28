@@ -1,4 +1,4 @@
-module github.com/baron-chain/PQC-Standards-Implementation/go
+module github.com/liviuepure/PQC-Standards-Implementation/go
 
 go 1.22
 

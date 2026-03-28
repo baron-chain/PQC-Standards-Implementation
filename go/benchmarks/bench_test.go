@@ -7,10 +7,10 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mlkem"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/slhdsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mlkem"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/slhdsa"
 )
 
 // ---------------------------------------------------------------------------

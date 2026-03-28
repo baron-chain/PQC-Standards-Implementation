@@ -6,21 +6,22 @@ package com.pqc.slhdsa;
  */
 public enum SlhParams {
 
-    // SHAKE-based parameter sets
-    SHAKE_128F("SLH-DSA-SHAKE-128f", 16, 16, 63,  7, 12, 14, 33, 66, HashFamily.SHAKE),
-    SHAKE_128S("SLH-DSA-SHAKE-128s", 16, 16, 63,  7, 14, 12, 35, 17, HashFamily.SHAKE),
-    SHAKE_192F("SLH-DSA-SHAKE-192f", 24, 16, 66,  8, 14, 17, 33, 66, HashFamily.SHAKE),
-    SHAKE_192S("SLH-DSA-SHAKE-192s", 24, 16, 66,  8, 17, 14, 35, 17, HashFamily.SHAKE),
-    SHAKE_256F("SLH-DSA-SHAKE-256f", 32, 16, 68, 14, 17, 9,  35, 35, HashFamily.SHAKE),
-    SHAKE_256S("SLH-DSA-SHAKE-256s", 32, 16, 68, 14, 22, 8,  47, 9,  HashFamily.SHAKE),
+    // SHAKE-based parameter sets (FIPS 205 Table 1)
+    // Constructor: (name, n, w, m_unused, hPrime, d, a, k, lgT_unused, hashFamily)
+    SHAKE_128F("SLH-DSA-SHAKE-128f", 16, 16, 0,  3, 22,  6, 33, 0, HashFamily.SHAKE),
+    SHAKE_128S("SLH-DSA-SHAKE-128s", 16, 16, 0,  9,  7, 12, 14, 0, HashFamily.SHAKE),
+    SHAKE_192F("SLH-DSA-SHAKE-192f", 24, 16, 0,  3, 22,  8, 33, 0, HashFamily.SHAKE),
+    SHAKE_192S("SLH-DSA-SHAKE-192s", 24, 16, 0,  9,  7, 14, 17, 0, HashFamily.SHAKE),
+    SHAKE_256F("SLH-DSA-SHAKE-256f", 32, 16, 0,  4, 17,  9, 35, 0, HashFamily.SHAKE),
+    SHAKE_256S("SLH-DSA-SHAKE-256s", 32, 16, 0,  8,  8, 14, 22, 0, HashFamily.SHAKE),
 
-    // SHA2-based parameter sets
-    SHA2_128F("SLH-DSA-SHA2-128f", 16, 16, 63,  7, 12, 14, 33, 66, HashFamily.SHA2),
-    SHA2_128S("SLH-DSA-SHA2-128s", 16, 16, 63,  7, 14, 12, 35, 17, HashFamily.SHA2),
-    SHA2_192F("SLH-DSA-SHA2-192f", 24, 16, 66,  8, 14, 17, 33, 66, HashFamily.SHA2),
-    SHA2_192S("SLH-DSA-SHA2-192s", 24, 16, 66,  8, 17, 14, 35, 17, HashFamily.SHA2),
-    SHA2_256F("SLH-DSA-SHA2-256f", 32, 16, 68, 14, 17, 9,  35, 35, HashFamily.SHA2),
-    SHA2_256S("SLH-DSA-SHA2-256s", 32, 16, 68, 14, 22, 8,  47, 9,  HashFamily.SHA2);
+    // SHA2-based parameter sets (FIPS 205 Table 1)
+    SHA2_128F("SLH-DSA-SHA2-128f", 16, 16, 0,  3, 22,  6, 33, 0, HashFamily.SHA2),
+    SHA2_128S("SLH-DSA-SHA2-128s", 16, 16, 0,  9,  7, 12, 14, 0, HashFamily.SHA2),
+    SHA2_192F("SLH-DSA-SHA2-192f", 24, 16, 0,  3, 22,  8, 33, 0, HashFamily.SHA2),
+    SHA2_192S("SLH-DSA-SHA2-192s", 24, 16, 0,  9,  7, 14, 17, 0, HashFamily.SHA2),
+    SHA2_256F("SLH-DSA-SHA2-256f", 32, 16, 0,  4, 17,  9, 35, 0, HashFamily.SHA2),
+    SHA2_256S("SLH-DSA-SHA2-256s", 32, 16, 0,  8,  8, 14, 22, 0, HashFamily.SHA2);
 
     public enum HashFamily { SHAKE, SHA2 }
 

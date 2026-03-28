@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
 )
 
 func testKemRoundtrip(t *testing.T, p params.ParameterSet, name string) {

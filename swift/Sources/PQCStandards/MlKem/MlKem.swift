@@ -46,8 +46,7 @@ public enum MlKem {
         let hEk = KemHash.h(ek)
         let (kBar, r) = KemHash.g(m + hEk)
         let ct = Kpke.encrypt(params: params, ek: ek, m: m, r: r)
-        let k = KemHash.sha3_256(kBar + KemHash.h(ct))
-        return MlKemEncapsResult(ciphertext: ct, sharedSecret: k)
+        return MlKemEncapsResult(ciphertext: ct, sharedSecret: kBar)
     }
 
     /// Decapsulate
@@ -62,11 +61,11 @@ public enum MlKem {
         let (kBar, r) = KemHash.g(mPrime + hEk)
         let ctPrime = Kpke.encrypt(params: params, ek: ek, m: mPrime, r: r)
 
-        // Implicit rejection
-        let kReject = KemHash.sha3_256(z + KemHash.h(ct))
+        // Implicit rejection: J(z || c)
+        let kReject = KemHash.j(z + ct)
 
         if ct.count == ctPrime.count && ct == ctPrime {
-            return KemHash.sha3_256(kBar + KemHash.h(ct))
+            return kBar
         } else {
             return kReject
         }

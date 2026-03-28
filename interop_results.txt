@@ -1,0 +1,20 @@
+PQC Cross-Language Interoperability Test Results
+Date: 2026-03-28
+Test message: PQC cross-language interoperability test vector
+
+Algorithm              Parameter Set             Py(gen)   Go      Java    JS      Rust    Swift   .NET    PHP    
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ML-KEM                 ML-KEM-512                PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+ML-KEM                 ML-KEM-768                PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+ML-KEM                 ML-KEM-1024               PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+ML-DSA                 ML-DSA-44                 PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+ML-DSA                 ML-DSA-65                 PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+ML-DSA                 ML-DSA-87                 PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-128f        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-128s        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-192f        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-192s        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-256f        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+SLH-DSA                SLH-DSA-SHAKE-256s        PASS      PASS    PASS    PASS    PASS    PASS    PASS    PASS   
+
+Summary: 96 total, 96 passed, 0 failed, 0 skipped

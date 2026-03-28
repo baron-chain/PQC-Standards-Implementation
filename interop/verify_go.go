@@ -16,7 +16,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
 )
 
 type vectors struct {

@@ -1,0 +1,158 @@
+{
+  "test_date": "2026-03-28",
+  "generator": "Python 3.14.3",
+  "test_message": "PQC cross-language interoperability test vector",
+  "results": [
+    {
+      "algorithm": "ML-KEM",
+      "parameter_set": "ML-KEM-512",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "ML-KEM",
+      "parameter_set": "ML-KEM-768",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "ML-KEM",
+      "parameter_set": "ML-KEM-1024",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "ML-DSA",
+      "parameter_set": "ML-DSA-44",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "ML-DSA",
+      "parameter_set": "ML-DSA-65",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "ML-DSA",
+      "parameter_set": "ML-DSA-87",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-128f",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-128s",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-192f",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-192s",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-256f",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    },
+    {
+      "algorithm": "SLH-DSA",
+      "parameter_set": "SLH-DSA-SHAKE-256s",
+      "python_generate": "PASS",
+      "go_verify": "PASS",
+      "java_verify": "PASS",
+      "js_verify": "PASS",
+      "rust_verify": "PASS",
+      "swift_verify": "PASS",
+      "dotnet_verify": "PASS",
+      "php_verify": "PASS"
+    }
+  ],
+  "summary": {
+    "total_tests": 96,
+    "passed": 96,
+    "failed": 0,
+    "skipped": 0,
+    "notes": "All 7 languages tested: Go, Java, JS, Rust, Swift, .NET, PHP"
+  }
+}

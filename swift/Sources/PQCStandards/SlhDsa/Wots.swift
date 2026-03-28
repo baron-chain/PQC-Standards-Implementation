@@ -118,7 +118,7 @@ public enum WotsPlus {
         for v in baseW {
             csum += (w - 1) - v
         }
-        csum <<= ((8 - ((baseW.count * lgW) % 8)) % 8)
+        csum <<= ((8 - ((len2 * lgW) % 8)) % 8)
         let totalBits = len2 * lgW
         let totalBytes = (totalBits + 7) / 8
         var csumBytes = [UInt8]()

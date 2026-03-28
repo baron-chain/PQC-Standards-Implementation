@@ -81,14 +81,12 @@ final class Wots
         }
         $csum <<= (8 - (($len2 * $lgw) % 8)) % 8;
 
-        // Encode checksum in base-w
-        $csumBytes = '';
+        // Encode checksum as big-endian bytes (ceil(len2*lgw/8) bytes)
         $csumLen = intdiv($len2 * $lgw + 7, 8);
+        $csumBytes = '';
         for ($i = $csumLen - 1; $i >= 0; $i--) {
-            $csumBytes = chr(($csum >> ($i * 8)) & 0xFF) . $csumBytes;
+            $csumBytes .= chr(($csum >> ($i * 8)) & 0xFF);
         }
-        // Reverse for big-endian
-        $csumBytes = pack('N', $csum); // Use 4 bytes
         $csumBaseW = self::baseW($csumBytes, $lgw, $len2);
 
         $msgAll = array_merge($msgBaseW, $csumBaseW);
@@ -137,7 +135,12 @@ final class Wots
         }
         $csum <<= (8 - (($len2 * $lgw) % 8)) % 8;
 
-        $csumBytes = pack('N', $csum);
+        // Encode checksum as big-endian bytes (ceil(len2*lgw/8) bytes)
+        $csumLen2 = intdiv($len2 * $lgw + 7, 8);
+        $csumBytes = '';
+        for ($i = $csumLen2 - 1; $i >= 0; $i--) {
+            $csumBytes .= chr(($csum >> ($i * 8)) & 0xFF);
+        }
         $csumBaseW = self::baseW($csumBytes, $lgw, $len2);
 
         $msgAll = array_merge($msgBaseW, $csumBaseW);

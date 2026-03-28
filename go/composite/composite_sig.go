@@ -16,7 +16,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
 )
 
 // Scheme identifies a composite signature variant.

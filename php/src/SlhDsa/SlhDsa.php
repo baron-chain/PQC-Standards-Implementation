@@ -103,37 +103,36 @@ final class SlhDsa
         // R = PRF_msg(SK.prf, optRand, M)
         $R = SlhHash::prfMsg($skPrf, $optRand, $message, $n);
 
-        // digest = H_msg(R, PK.seed, PK.root, M)
-        $digest = SlhHash::hMsg($R, $pkSeed, $pkRoot, $message, $mdLen);
+        $treeIdxLen = $params['treeIdxLen'];
+        $leafIdxLen = $params['leafIdxLen'];
+        $totalDigestLen = $mdLen; // mdLen already includes treeIdxLen + leafIdxLen
+
+        // digest = H_msg(R, PK.seed, PK.root, M) — output length = mdLen
+        $digest = SlhHash::hMsg($R, $pkSeed, $pkRoot, $message, $totalDigestLen);
 
         // Split digest into md, idx_tree, idx_leaf
         $mdBits = $k * $a;
         $mdBytes = intdiv($mdBits + 7, 8);
         $md = substr($digest, 0, $mdBytes);
 
-        // Extract tree index and leaf index from remaining digest bytes
-        $remaining = substr($digest, $mdBytes);
-        $totalTreeHeight = ($d - 1) * $hPrime;
-
         $idxTree = 0;
         $idxLeaf = 0;
 
-        // Extract idxTree
-        $treeBytes = min(strlen($remaining), 8);
-        for ($i = 0; $i < $treeBytes; $i++) {
-            $idxTree = ($idxTree << 8) | ord($remaining[$i]);
+        // Extract idxTree (treeIdxLen bytes, big-endian)
+        for ($i = 0; $i < $treeIdxLen; $i++) {
+            $idxTree = ($idxTree << 8) | ord($digest[$mdBytes + $i]);
         }
-        if ($totalTreeHeight < 64) {
-            $idxTree &= (1 << $totalTreeHeight) - 1;
+        $treeBits = $params['full_height'] - $hPrime;
+        if ($treeBits < 63) {
+            $idxTree &= (1 << $treeBits) - 1;
+        } elseif ($treeBits === 63) {
+            $idxTree &= PHP_INT_MAX;  // (1<<63)-1 overflows in PHP
         }
+        // treeBits >= 64: no masking needed
 
-        // Extract idxLeaf from remaining bytes
-        $leafStart = $treeBytes;
-        $leafBytes = min(strlen($remaining) - $leafStart, 4);
-        for ($i = 0; $i < $leafBytes; $i++) {
-            if ($leafStart + $i < strlen($remaining)) {
-                $idxLeaf = ($idxLeaf << 8) | ord($remaining[$leafStart + $i]);
-            }
+        // Extract idxLeaf (leafIdxLen bytes, big-endian)
+        for ($i = 0; $i < $leafIdxLen; $i++) {
+            $idxLeaf = ($idxLeaf << 8) | ord($digest[$mdBytes + $treeIdxLen + $i]);
         }
         $idxLeaf &= (1 << $hPrime) - 1;
 
@@ -180,7 +179,10 @@ final class SlhDsa
 
         $htSig = substr($sig, $offset);
 
-        // Compute digest
+        $treeIdxLen = $params['treeIdxLen'];
+        $leafIdxLen = $params['leafIdxLen'];
+
+        // Compute digest (full length = mdLen)
         $digest = SlhHash::hMsg($R, $pkSeed, $pkRoot, $message, $mdLen);
 
         // Split digest
@@ -188,26 +190,24 @@ final class SlhDsa
         $mdBytes = intdiv($mdBits + 7, 8);
         $md = substr($digest, 0, $mdBytes);
 
-        $remaining = substr($digest, $mdBytes);
-        $totalTreeHeight = ($d - 1) * $hPrime;
-
         $idxTree = 0;
         $idxLeaf = 0;
 
-        $treeBytes = min(strlen($remaining), 8);
-        for ($i = 0; $i < $treeBytes; $i++) {
-            $idxTree = ($idxTree << 8) | ord($remaining[$i]);
+        // Extract idxTree (treeIdxLen bytes, big-endian)
+        for ($i = 0; $i < $treeIdxLen; $i++) {
+            $idxTree = ($idxTree << 8) | ord($digest[$mdBytes + $i]);
         }
-        if ($totalTreeHeight < 64) {
-            $idxTree &= (1 << $totalTreeHeight) - 1;
+        $treeBits = $params['full_height'] - $hPrime;
+        if ($treeBits < 63) {
+            $idxTree &= (1 << $treeBits) - 1;
+        } elseif ($treeBits === 63) {
+            $idxTree &= PHP_INT_MAX;  // (1<<63)-1 overflows in PHP
         }
+        // treeBits >= 64: no masking needed
 
-        $leafStart = $treeBytes;
-        $leafBytes = min(strlen($remaining) - $leafStart, 4);
-        for ($i = 0; $i < $leafBytes; $i++) {
-            if ($leafStart + $i < strlen($remaining)) {
-                $idxLeaf = ($idxLeaf << 8) | ord($remaining[$leafStart + $i]);
-            }
+        // Extract idxLeaf (leafIdxLen bytes, big-endian)
+        for ($i = 0; $i < $leafIdxLen; $i++) {
+            $idxLeaf = ($idxLeaf << 8) | ord($digest[$mdBytes + $treeIdxLen + $i]);
         }
         $idxLeaf &= (1 << $hPrime) - 1;
 

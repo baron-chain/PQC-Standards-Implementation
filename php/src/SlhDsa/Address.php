@@ -52,20 +52,19 @@ final class Address
      */
     public function setTreeAddress(int $tree): self
     {
-        // Store as 12-byte big-endian
-        $this->data[4] = chr(($tree >> 56) & 0xFF);
-        $this->data[5] = chr(($tree >> 48) & 0xFF);
-        $this->data[6] = chr(($tree >> 40) & 0xFF);
-        $this->data[7] = chr(($tree >> 32) & 0xFF);
-        $this->data[8] = chr(($tree >> 24) & 0xFF);
-        $this->data[9] = chr(($tree >> 16) & 0xFF);
-        $this->data[10] = chr(($tree >> 8) & 0xFF);
-        $this->data[11] = chr($tree & 0xFF);
-        // Bytes 12-15 are zero for tree addresses fitting in 8 bytes
-        $this->data[12] = "\x00";
-        $this->data[13] = "\x00";
-        $this->data[14] = "\x00";
-        $this->data[15] = "\x00";
+        // FIPS 205 Figure 2: bytes 4-7 zero, bytes 8-15 hold uint64 big-endian
+        $this->data[4]  = "\x00";
+        $this->data[5]  = "\x00";
+        $this->data[6]  = "\x00";
+        $this->data[7]  = "\x00";
+        $this->data[8]  = chr(($tree >> 56) & 0xFF);
+        $this->data[9]  = chr(($tree >> 48) & 0xFF);
+        $this->data[10] = chr(($tree >> 40) & 0xFF);
+        $this->data[11] = chr(($tree >> 32) & 0xFF);
+        $this->data[12] = chr(($tree >> 24) & 0xFF);
+        $this->data[13] = chr(($tree >> 16) & 0xFF);
+        $this->data[14] = chr(($tree >> 8) & 0xFF);
+        $this->data[15] = chr($tree & 0xFF);
         return $this;
     }
 

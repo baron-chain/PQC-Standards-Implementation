@@ -10,7 +10,8 @@ from mldsa.params import MLDSAParams
 def bit_pack(poly: list[int], a: int, b: int) -> bytes:
     """Pack polynomial coefficients that are in range [-a, b] into bytes.
 
-    Each coefficient is mapped to [0, a+b] then packed with ceil(log2(a+b+1)) bits.
+    Each coefficient is mapped via val = b - coeff (FIPS 204 Algorithm 24).
+    Coefficients in [-a, b] map to [0, a+b].
     """
     total = a + b
     if total == 0:
@@ -18,8 +19,8 @@ def bit_pack(poly: list[int], a: int, b: int) -> bytes:
     bits_per_coeff = total.bit_length()
     result_bits = []
     for c in poly:
-        # Map coefficient: val = a + coeff (shift range from [-a, b] to [0, a+b])
-        val = a + c
+        # FIPS 204: val = b - w[j]  (maps [-a, b] → [0, a+b])
+        val = b - c
         for j in range(bits_per_coeff):
             result_bits.append((val >> j) & 1)
     # Convert bits to bytes
@@ -33,7 +34,7 @@ def bit_pack(poly: list[int], a: int, b: int) -> bytes:
 def bit_unpack(data: bytes, a: int, b: int, n: int = 256) -> list[int]:
     """Unpack bytes into polynomial coefficients in range [-a, b].
 
-    Inverse of bit_pack.
+    Inverse of bit_pack (FIPS 204 Algorithm 25): coeff = b - val.
     """
     total = a + b
     if total == 0:
@@ -51,7 +52,8 @@ def bit_unpack(data: bytes, a: int, b: int, n: int = 256) -> list[int]:
             idx = i * bits_per_coeff + j
             if idx < len(bits):
                 val |= bits[idx] << j
-        coeffs.append(val - a)
+        # FIPS 204: w[j] = b - v
+        coeffs.append(b - val)
     return coeffs
 
 

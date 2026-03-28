@@ -17,14 +17,13 @@ public enum Hypertree {
 
         // Sign at higher layers
         var tree = idxTree
-        var leaf = UInt32(tree & UInt64((1 << params.hPrime) - 1))
 
         for j in 1..<params.d {
+            let leaf = UInt32(tree & UInt64((1 << params.hPrime) - 1))
             tree >>= params.hPrime
-            leaf = UInt32(tree & UInt64((1 << params.hPrime) - 1))
 
             adrs.setLayerAddress(UInt32(j))
-            adrs.setTreeAddressBytes(tree >> params.hPrime)
+            adrs.setTreeAddressBytes(tree)
 
             let layerSig = Xmss.sign(params: params, msg: root, skSeed: skSeed,
                                      pkSeed: pkSeed, idx: leaf, adrs: &adrs)
@@ -56,11 +55,11 @@ public enum Hypertree {
         var sigOff = sigBlockSize
 
         for j in 1..<params.d {
-            tree >>= params.hPrime
             let leaf = UInt32(tree & UInt64((1 << params.hPrime) - 1))
+            tree >>= params.hPrime
 
             adrs.setLayerAddress(UInt32(j))
-            adrs.setTreeAddressBytes(tree >> params.hPrime)
+            adrs.setTreeAddressBytes(tree)
 
             let layerSig = Array(sig[sigOff..<(sigOff + sigBlockSize)])
             sigOff += sigBlockSize

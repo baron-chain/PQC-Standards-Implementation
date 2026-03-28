@@ -4,7 +4,7 @@ package mldsa
 import (
 	"crypto/rand"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/mldsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/mldsa"
 )
 
 // Params is the ML-DSA parameter set.

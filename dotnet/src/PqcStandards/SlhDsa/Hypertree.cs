@@ -21,7 +21,7 @@ public static class Hypertree
         for (int j = 1; j < p.D; j++)
         {
             idxLeaf = (int)(idxTree & ((1L << p.HPrime) - 1));
-            idxTree >>= p.HPrime;
+            idxTree >>>= p.HPrime; // unsigned right shift (avoid sign-extension for 64-bit tree indices)
 
             adrs.SetLayerAddress(j);
             adrs.SetTreeAddress(idxTree);
@@ -53,7 +53,7 @@ public static class Hypertree
             if (j < p.D - 1)
             {
                 idxLeaf = (int)(idxTree & ((1L << p.HPrime) - 1));
-                idxTree >>= p.HPrime;
+                idxTree >>>= p.HPrime; // unsigned right shift
             }
         }
 

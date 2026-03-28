@@ -5,8 +5,8 @@ import (
 	"errors"
 	"io"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/hash"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/hash"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
 )
 
 // KeyGen implements ML-KEM.KeyGen (FIPS 203 Algorithm 16).

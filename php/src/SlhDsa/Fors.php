@@ -34,27 +34,29 @@ final class Fors
         int $targetHeight,
         Address $adrs,
         int $treeIdx,
-        int $n
+        int $n,
+        int $a
     ): string {
         if ($targetHeight === 0) {
-            $sk = self::skGen($skSeed, $pkSeed, $adrs, $treeIdx * (1 << 0) + $targetNode, $n);
+            $globalIdx = $treeIdx * (1 << $a) + $targetNode;
+            $sk = self::skGen($skSeed, $pkSeed, $adrs, $globalIdx, $n);
             $leafAdrs = $adrs->copy();
             $leafAdrs->setType(Address::FORS_TREE);
             $leafAdrs->setKeyPairAddress($adrs->getKeyPairAddress());
             $leafAdrs->setTreeHeight(0);
-            $leafAdrs->setTreeIndex($treeIdx * 1 + $targetNode);
+            $leafAdrs->setTreeIndex($globalIdx);
 
             return SlhHash::F($pkSeed, $leafAdrs, $sk, $n);
         }
 
-        $lNode = self::treeNode($skSeed, $pkSeed, 2 * $targetNode, $targetHeight - 1, $adrs, $treeIdx, $n);
-        $rNode = self::treeNode($skSeed, $pkSeed, 2 * $targetNode + 1, $targetHeight - 1, $adrs, $treeIdx, $n);
+        $lNode = self::treeNode($skSeed, $pkSeed, 2 * $targetNode, $targetHeight - 1, $adrs, $treeIdx, $n, $a);
+        $rNode = self::treeNode($skSeed, $pkSeed, 2 * $targetNode + 1, $targetHeight - 1, $adrs, $treeIdx, $n, $a);
 
         $nodeAdrs = $adrs->copy();
         $nodeAdrs->setType(Address::FORS_TREE);
         $nodeAdrs->setKeyPairAddress($adrs->getKeyPairAddress());
         $nodeAdrs->setTreeHeight($targetHeight);
-        $nodeAdrs->setTreeIndex($treeIdx * (1 << $targetHeight) + $targetNode);
+        $nodeAdrs->setTreeIndex($treeIdx * (1 << ($a - $targetHeight)) + $targetNode);
 
         return SlhHash::H($pkSeed, $nodeAdrs, $lNode . $rNode, $n);
     }
@@ -94,7 +96,7 @@ final class Fors
             // Authentication path
             for ($j = 0; $j < $a; $j++) {
                 $s = ($idx >> $j) ^ 1;
-                $sig .= self::treeNode($skSeed, $pkSeed, $s, $j, $adrs, $i, $n);
+                $sig .= self::treeNode($skSeed, $pkSeed, $s, $j, $adrs, $i, $n, $a);
             }
         }
 
@@ -146,12 +148,11 @@ final class Fors
                 $nodeAdrs->setType(Address::FORS_TREE);
                 $nodeAdrs->setKeyPairAddress($adrs->getKeyPairAddress());
                 $nodeAdrs->setTreeHeight($j + 1);
+                $nodeAdrs->setTreeIndex($i * (1 << ($a - ($j + 1))) + ($idx >> ($j + 1)));
 
                 if ((($idx >> $j) & 1) === 0) {
-                    $nodeAdrs->setTreeIndex($i * (1 << ($j + 1)) + ($idx >> ($j + 1)));
                     $node = SlhHash::H($pkSeed, $nodeAdrs, $node . $authJ, $n);
                 } else {
-                    $nodeAdrs->setTreeIndex($i * (1 << ($j + 1)) + ($idx >> ($j + 1)));
                     $node = SlhHash::H($pkSeed, $nodeAdrs, $authJ . $node, $n);
                 }
             }

@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 )
 
 func TestZetas(t *testing.T) {

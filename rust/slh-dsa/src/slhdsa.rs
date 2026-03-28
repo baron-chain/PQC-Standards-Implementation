@@ -88,7 +88,10 @@ pub fn sign<P: ParamSet, H: HashSuite>(sk: &[u8], msg: &[u8]) -> Vec<u8> {
     let idx_tree_bytes = &digest[md_len..md_len + tree_bytes];
     let idx_leaf_bytes = &digest[md_len + tree_bytes..md_len + tree_bytes + leaf_bytes];
 
-    let idx_tree = to_int(idx_tree_bytes) & ((1u64 << tree_bits) - 1);
+    let idx_tree = {
+        let raw = to_int(idx_tree_bytes);
+        if tree_bits >= 64 { raw } else { raw & ((1u64 << tree_bits) - 1) }
+    };
     let idx_leaf = (to_int(idx_leaf_bytes) & ((1u64 << leaf_bits) - 1)) as u32;
 
     // FORS signature
@@ -97,10 +100,10 @@ pub fn sign<P: ParamSet, H: HashSuite>(sk: &[u8], msg: &[u8]) -> Vec<u8> {
     adrs.set_type(AddressType::ForsTree);
     adrs.set_key_pair_address(idx_leaf);
 
-    let sig_fors = fors::fors_sign::<H>(md, sk_seed, pk_seed, &mut adrs, n, P::K, P::A);
+    let sig_fors = fors::fors_sign::<H>(md, sk_seed, pk_seed, &adrs, n, P::K, P::A);
 
     // Compute FORS public key
-    let fors_pk = fors::fors_pk_from_sig::<H>(&sig_fors, md, pk_seed, &mut adrs, n, P::K, P::A);
+    let fors_pk = fors::fors_pk_from_sig::<H>(&sig_fors, md, pk_seed, &adrs, n, P::K, P::A);
 
     // Hypertree signature on FORS public key
     let sig_ht = hypertree::ht_sign::<H>(
@@ -152,7 +155,10 @@ pub fn verify<P: ParamSet, H: HashSuite>(pk: &[u8], msg: &[u8], sig: &[u8]) -> b
     let idx_tree_bytes = &digest[md_len..md_len + tree_bytes];
     let idx_leaf_bytes = &digest[md_len + tree_bytes..md_len + tree_bytes + leaf_bytes];
 
-    let idx_tree = to_int(idx_tree_bytes) & ((1u64 << tree_bits) - 1);
+    let idx_tree = {
+        let raw = to_int(idx_tree_bytes);
+        if tree_bits >= 64 { raw } else { raw & ((1u64 << tree_bits) - 1) }
+    };
     let idx_leaf = (to_int(idx_leaf_bytes) & ((1u64 << leaf_bits) - 1)) as u32;
 
     // Recover FORS public key from signature
@@ -162,7 +168,7 @@ pub fn verify<P: ParamSet, H: HashSuite>(pk: &[u8], msg: &[u8], sig: &[u8]) -> b
     adrs.set_key_pair_address(idx_leaf);
 
     let fors_pk =
-        fors::fors_pk_from_sig::<H>(sig_fors, md, pk_seed, &mut adrs, n, P::K, P::A);
+        fors::fors_pk_from_sig::<H>(sig_fors, md, pk_seed, &adrs, n, P::K, P::A);
 
     // Verify hypertree signature on FORS public key
     hypertree::ht_verify::<H>(

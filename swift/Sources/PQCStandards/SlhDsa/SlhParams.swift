@@ -44,9 +44,27 @@ public struct SlhDsaParams {
         n: 16, h: 63, d: 7, hPrime: 9, a: 12, k: 14, w: 16, lgW: 4, isSHAKE: true
     )
 
+    // SLH-DSA-SHAKE-192f
+    public static let shake192f = SlhDsaParams(
+        name: "SLH-DSA-SHAKE-192f",
+        n: 24, h: 66, d: 22, hPrime: 3, a: 8, k: 33, w: 16, lgW: 4, isSHAKE: true
+    )
+
+    // SLH-DSA-SHAKE-192s
+    public static let shake192s = SlhDsaParams(
+        name: "SLH-DSA-SHAKE-192s",
+        n: 24, h: 63, d: 7, hPrime: 9, a: 14, k: 17, w: 16, lgW: 4, isSHAKE: true
+    )
+
     // SLH-DSA-SHAKE-256f
     public static let shake256f = SlhDsaParams(
         name: "SLH-DSA-SHAKE-256f",
         n: 32, h: 68, d: 17, hPrime: 4, a: 9, k: 35, w: 16, lgW: 4, isSHAKE: true
+    )
+
+    // SLH-DSA-SHAKE-256s
+    public static let shake256s = SlhDsaParams(
+        name: "SLH-DSA-SHAKE-256s",
+        n: 32, h: 64, d: 8, hPrime: 8, a: 14, k: 22, w: 16, lgW: 4, isSHAKE: true
     )
 }

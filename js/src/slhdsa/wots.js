@@ -65,9 +65,9 @@ function wotsSign(M, skSeed, pkSeed, adrs, params, hashSuite) {
   }
 
   // csum needs ceil(floor(log2(len1*(w-1)))+1) bits, packed into bytes, then base2b
-  const csumBits = Math.floor(Math.log2(len1 * (w - 1))) + 1;
+  const csumBits = len2 * lgw;  // len2 * log2(w) bits needed for checksum
   const csumBytes = Math.ceil(csumBits / 8);
-  csum <<= (8 * csumBytes - csumBits); // left-shift per spec: csum << (8 - (csumBits % 8)) % 8
+  csum <<= (8 * csumBytes - csumBits);
   const csumBuf = toByte(csum, csumBytes);
   const msg2 = base2b(csumBuf, lgw, len2);
 
@@ -106,7 +106,7 @@ function wotsPkFromSig(sig, M, pkSeed, adrs, params, hashSuite) {
     csum += w - 1 - msg1[i];
   }
 
-  const csumBits = Math.floor(Math.log2(len1 * (w - 1))) + 1;
+  const csumBits = len2 * lgw;  // len2 * log2(w) bits needed for checksum
   const csumBytes = Math.ceil(csumBits / 8);
   csum <<= (8 * csumBytes - csumBits);
   const csumBuf = toByte(csum, csumBytes);

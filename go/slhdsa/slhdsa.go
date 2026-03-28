@@ -5,7 +5,7 @@ package slhdsa
 import (
 	"crypto/rand"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/slhdsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/slhdsa"
 )
 
 // Re-export parameter sets for convenience.
@@ -92,26 +92,22 @@ func Sign(sk, msg []byte, params *Params) []byte {
 	sig := make([]byte, 0, params.SigLen)
 	sig = append(sig, r...)
 
-	// Compute message digest
-	// digest = HMsg(R, PKseed, PKroot, M)
-	// The digest length needs to provide:
-	//   md: k*a bits = ceil(k*a/8) bytes
-	//   idx_tree: h - h/d bits
-	//   idx_leaf: h/d bits
+	// Compute message digest (FIPS 205 §10.2.1)
+	// digest layout: tmp_md (ceil(k*a/8)) || tmp_idx_tree (ceil((h-hp)/8)) || tmp_idx_leaf (ceil(hp/8))
 	mdLen := (params.K*params.A + 7) / 8
 	treeIdxBits := params.H - params.HP
 	leafIdxBits := params.HP
-	totalBits := treeIdxBits + leafIdxBits
-	idxLen := (totalBits + 7) / 8
-	digestLen := mdLen + idxLen
+	treeBytes := (treeIdxBits + 7) / 8
+	leafBytes := (leafIdxBits + 7) / 8
+	digestLen := mdLen + treeBytes + leafBytes
 
 	digest := hs.HMsg(r, pkSeed, pkRoot, msg, digestLen)
 
 	md := digest[:mdLen]
 	idxBytes := digest[mdLen:]
 
-	// Extract tree index and leaf index
-	idxBits := base2bIdx(idxBytes, treeIdxBits, leafIdxBits)
+	// Extract tree index and leaf index (separate byte slices, lower bits)
+	idxBits := base2bIdx(idxBytes, treeIdxBits, treeBytes, leafIdxBits, leafBytes)
 	idxTree := idxBits.tree
 	idxLeaf := idxBits.leaf
 
@@ -162,20 +158,20 @@ func Verify(pk, msg, sig []byte, params *Params) bool {
 
 	htSig := sig[offset:]
 
-	// Compute message digest
+	// Compute message digest (FIPS 205 §10.2.1)
 	mdLen := (params.K*params.A + 7) / 8
 	treeIdxBits := params.H - params.HP
 	leafIdxBits := params.HP
-	totalBits := treeIdxBits + leafIdxBits
-	idxLen := (totalBits + 7) / 8
-	digestLen := mdLen + idxLen
+	treeBytes := (treeIdxBits + 7) / 8
+	leafBytes := (leafIdxBits + 7) / 8
+	digestLen := mdLen + treeBytes + leafBytes
 
 	digest := hs.HMsg(r, pkSeed, pkRoot, msg, digestLen)
 
 	md := digest[:mdLen]
 	idxBytes := digest[mdLen:]
 
-	idxBits := base2bIdx(idxBytes, treeIdxBits, leafIdxBits)
+	idxBits := base2bIdx(idxBytes, treeIdxBits, treeBytes, leafIdxBits, leafBytes)
 	idxTree := idxBits.tree
 	idxLeaf := idxBits.leaf
 
@@ -198,38 +194,29 @@ type idxPair struct {
 	leaf uint32
 }
 
-// base2bIdx extracts tree and leaf indices from index bytes.
-func base2bIdx(idxBytes []byte, treeBits, leafBits int) idxPair {
-	// Convert all bytes to a big integer
-	totalBits := treeBits + leafBits
-	totalBytes := (totalBits + 7) / 8
-
-	// Ensure we have enough bytes
-	data := make([]byte, totalBytes)
-	if len(idxBytes) >= totalBytes {
-		copy(data, idxBytes[:totalBytes])
-	} else {
-		copy(data[totalBytes-len(idxBytes):], idxBytes)
+// base2bIdx extracts tree and leaf indices from separate byte slices.
+// idxBytes = treeBytes_data || leafBytes_data
+// Lower treeBits bits of tree slice → idx_tree
+// Lower leafBits bits of leaf slice → idx_leaf
+// This matches FIPS 205 and Python reference implementation.
+func base2bIdx(idxBytes []byte, treeBits, treeByteLen, leafBits, leafByteLen int) idxPair {
+	// Tree index: first treeByteLen bytes, big-endian, lower treeBits bits
+	var treeVal uint64
+	for i := 0; i < treeByteLen && i < len(idxBytes); i++ {
+		treeVal = (treeVal << 8) | uint64(idxBytes[i])
 	}
-
-	// Convert to big integer
-	var val uint64
-	for _, b := range data {
-		val = (val << 8) | uint64(b)
-	}
-
-	// Mask to totalBits
-	if totalBits < 64 {
-		val &= (1 << uint(totalBits)) - 1
-	}
-
-	leaf := uint32(val & ((1 << uint(leafBits)) - 1))
-	tree := val >> uint(leafBits)
-
-	// Mask tree to treeBits
 	if treeBits < 64 {
-		tree &= (1 << uint(treeBits)) - 1
+		treeVal &= (1 << uint(treeBits)) - 1
 	}
 
-	return idxPair{tree: tree, leaf: leaf}
+	// Leaf index: next leafByteLen bytes, big-endian, lower leafBits bits
+	var leafVal uint32
+	for i := treeByteLen; i < treeByteLen+leafByteLen && i < len(idxBytes); i++ {
+		leafVal = (leafVal << 8) | uint32(idxBytes[i])
+	}
+	if leafBits < 32 {
+		leafVal &= (1 << uint(leafBits)) - 1
+	}
+
+	return idxPair{tree: treeVal, leaf: leafVal}
 }

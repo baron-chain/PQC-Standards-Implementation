@@ -6,7 +6,7 @@
 package ntt
 
 import (
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 )
 
 // Zetas contains the precomputed twiddle factors for the NTT.

@@ -2,7 +2,7 @@
 package sampling
 
 import (
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 	"golang.org/x/crypto/sha3"
 )
 

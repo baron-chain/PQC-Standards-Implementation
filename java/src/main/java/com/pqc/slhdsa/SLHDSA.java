@@ -96,7 +96,7 @@ public final class SLHDSA {
         byte[] leafIdxBytes = SlhUtils.slice(digest, mdBytes + treeBytes, leafBytes);
 
         long idxTree = SlhUtils.toLong(treeIdxBytes, 0, treeBytes);
-        idxTree &= ((1L << treeBits) - 1); // mask to treeBits
+        if (treeBits < 64) idxTree &= (1L << treeBits) - 1; // treeBits=64: no mask needed (1L<<64==1 in Java)
         int idxLeaf = SlhUtils.toInt(leafIdxBytes, 0, leafBytes);
         idxLeaf &= ((1 << leafBits) - 1); // mask to leafBits
 
@@ -163,7 +163,7 @@ public final class SLHDSA {
         byte[] leafIdxBytes = SlhUtils.slice(digest, mdBytes + treeBytes, leafBytes);
 
         long idxTree = SlhUtils.toLong(treeIdxBytes, 0, treeBytes);
-        idxTree &= ((1L << treeBits) - 1);
+        if (treeBits < 64) idxTree &= (1L << treeBits) - 1; // treeBits=64: no mask needed (1L<<64==1 in Java)
         int idxLeaf = SlhUtils.toInt(leafIdxBytes, 0, leafBytes);
         idxLeaf &= ((1 << leafBits) - 1);
 

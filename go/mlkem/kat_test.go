@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
 )
 
 // parseKATVector reads a C2SP/CCTV intermediate test vector file and extracts

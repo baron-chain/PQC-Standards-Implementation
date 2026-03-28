@@ -2,7 +2,7 @@
 package compress
 
 import (
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 )
 
 // Compress computes Compress_d(x) = round((2^d / q) * x) mod 2^d.

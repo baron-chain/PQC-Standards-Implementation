@@ -52,7 +52,8 @@ public enum SlhHash {
         for i in 0..<treeBytes {
             idxTree = (idxTree << 8) | UInt64(digest[mdBytes + i])
         }
-        idxTree &= (1 << treeBits) - 1
+        let treeMask: UInt64 = treeBits >= 64 ? UInt64.max : (UInt64(1) << treeBits) - 1
+        idxTree &= treeMask
 
         var idxLeaf: UInt32 = 0
         for i in 0..<leafBytes {

@@ -22,19 +22,28 @@ public static class Wots
         int len = p.Len;
         int n = p.N;
 
+        int kp = GetKp(adrs);
         byte[][] tmp = new byte[len][];
         for (int i = 0; i < len; i++)
         {
+            // PRF uses a fresh WOTS_PRF address (type=WotsCompress, hash=0)
+            var skAdrs = adrs.Copy();
+            skAdrs.SetType(Address.WotsCompress);
+            skAdrs.SetKeyPairAddress(kp);
+            skAdrs.SetChainAddress(i);
+            byte[] sk = hash.Prf(pkSeed, skSeed, skAdrs, n);
+
             adrs.SetChainAddress(i);
-            byte[] sk = hash.Prf(pkSeed, skSeed, adrs, n);
+            adrs.SetHashAddress(0);
             tmp[i] = Chain(hash, pkSeed, adrs, sk, 0, w - 1, n);
         }
 
         // Compress
-        adrs.SetType(Address.WotsPk);
-        adrs.SetKeyPairAddress(GetKp(adrs));
+        var pkAdrs = adrs.Copy();
+        pkAdrs.SetType(Address.WotsPk);
+        pkAdrs.SetKeyPairAddress(kp);
         byte[] concat = Flatten(tmp, n);
-        return hash.Tl(pkSeed, adrs, concat, n);
+        return hash.Tl(pkSeed, pkAdrs, concat, n);
     }
 
     /// <summary>WOTS+ Sign a message digest.</summary>
@@ -43,14 +52,21 @@ public static class Wots
         int w = p.W;
         int len = p.Len;
         int n = p.N;
+        int kp = GetKp(adrs);
 
         int[] baseW = BaseW(msg, w, len, n);
 
         byte[][] sig = new byte[len][];
         for (int i = 0; i < len; i++)
         {
+            var skAdrs = adrs.Copy();
+            skAdrs.SetType(Address.WotsCompress);
+            skAdrs.SetKeyPairAddress(kp);
+            skAdrs.SetChainAddress(i);
+            byte[] sk = hash.Prf(pkSeed, skSeed, skAdrs, n);
+
             adrs.SetChainAddress(i);
-            byte[] sk = hash.Prf(pkSeed, skSeed, adrs, n);
+            adrs.SetHashAddress(0);
             sig[i] = Chain(hash, pkSeed, adrs, sk, 0, baseW[i], n);
         }
         return sig;
@@ -62,6 +78,7 @@ public static class Wots
         int w = p.W;
         int len = p.Len;
         int n = p.N;
+        int kp = GetKp(adrs);
 
         int[] baseW = BaseW(msg, w, len, n);
 
@@ -69,13 +86,15 @@ public static class Wots
         for (int i = 0; i < len; i++)
         {
             adrs.SetChainAddress(i);
+            adrs.SetHashAddress(0);
             tmp[i] = Chain(hash, pkSeed, adrs, sig[i], baseW[i], w - 1 - baseW[i], n);
         }
 
-        adrs.SetType(Address.WotsPk);
-        adrs.SetKeyPairAddress(GetKp(adrs));
+        var pkAdrs = adrs.Copy();
+        pkAdrs.SetType(Address.WotsPk);
+        pkAdrs.SetKeyPairAddress(kp);
         byte[] concat = Flatten(tmp, n);
-        return hash.Tl(pkSeed, adrs, concat, n);
+        return hash.Tl(pkSeed, pkAdrs, concat, n);
     }
 
     /// <summary>Convert message to base-w representation with checksum.</summary>
@@ -140,7 +159,7 @@ public static class Wots
 
     private static int GetKp(Address adrs)
     {
-        // Extract keypair address from bytes 16-19
-        return (adrs.Data[16] << 24) | (adrs.Data[17] << 16) | (adrs.Data[18] << 8) | adrs.Data[19];
+        // Extract keypair address from bytes 20-23 (FIPS 205 Figure 2)
+        return (adrs.Data[20] << 24) | (adrs.Data[21] << 16) | (adrs.Data[22] << 8) | adrs.Data[23];
     }
 }

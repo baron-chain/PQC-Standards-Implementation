@@ -65,7 +65,8 @@ public static class SlhDsaAlgorithm
         byte[] digest = hash.Hmsg(R, pkSeed, pkRoot, message, digestLen);
 
         byte[] md = digest[..mdLen];
-        long idxTree = BytesToLong(digest, mdLen, treeBytes) & ((1L << (p.H - p.HPrime)) - 1);
+        long treeMask = (p.H - p.HPrime >= 64) ? -1L : (1L << (p.H - p.HPrime)) - 1;
+        long idxTree = BytesToLong(digest, mdLen, treeBytes) & treeMask;
         int idxLeaf = (int)(BytesToLong(digest, mdLen + treeBytes, leafBytes) & ((1L << p.HPrime) - 1));
 
         // FORS sign
@@ -81,14 +82,13 @@ public static class SlhDsaAlgorithm
         // Hypertree sign on FORS public key
         byte[] htSig = Hypertree.Sign(hash, pkSeed, skSeed, forsPk, idxTree, idxLeaf, p);
 
-        // Assemble signature: R || FORS sig || HT sig
+        // Assemble signature: R || FORS sig (K trees × (1 sk + A auth nodes)) || HT sig
         using var sigStream = new MemoryStream();
         sigStream.Write(R);
-        // FORS signature
-        for (int i = 0; i < p.A; i++)
+        for (int i = 0; i < p.K; i++)  // K = number of FORS trees
         {
             sigStream.Write(forsSks[i]);
-            for (int j = 0; j < p.K; j++)
+            for (int j = 0; j < p.A; j++)  // A = tree height = auth path length
                 sigStream.Write(forsAuthPaths[i][j]);
         }
         sigStream.Write(htSig);
@@ -117,18 +117,19 @@ public static class SlhDsaAlgorithm
         byte[] digest = hash.Hmsg(R, pkSeed, pkRoot, message, digestLen);
 
         byte[] md = digest[..mdLen];
-        long idxTree = BytesToLong(digest, mdLen, treeBytes) & ((1L << (p.H - p.HPrime)) - 1);
+        long treeMask2 = (p.H - p.HPrime >= 64) ? -1L : (1L << (p.H - p.HPrime)) - 1;
+        long idxTree = BytesToLong(digest, mdLen, treeBytes) & treeMask2;
         int idxLeaf = (int)(BytesToLong(digest, mdLen + treeBytes, leafBytes) & ((1L << p.HPrime) - 1));
 
-        // Parse FORS signature
-        byte[][] forsSks = new byte[p.A][];
-        byte[][][] forsAuthPaths = new byte[p.A][][];
-        for (int i = 0; i < p.A; i++)
+        // Parse FORS signature: K trees × (1 sk + A auth nodes)
+        byte[][] forsSks = new byte[p.K][];
+        byte[][][] forsAuthPaths = new byte[p.K][][];
+        for (int i = 0; i < p.K; i++)  // K = number of FORS trees
         {
             forsSks[i] = sig[offset..(offset + n)];
             offset += n;
-            forsAuthPaths[i] = new byte[p.K][];
-            for (int j = 0; j < p.K; j++)
+            forsAuthPaths[i] = new byte[p.A][];
+            for (int j = 0; j < p.A; j++)  // A = tree height = auth path length
             {
                 forsAuthPaths[i][j] = sig[offset..(offset + n)];
                 offset += n;

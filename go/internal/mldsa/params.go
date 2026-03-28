@@ -49,8 +49,8 @@ var (
 		D:       13,
 		PKSize:  1952,
 		SKSize:  4032,
-		SigSize: 3293,
-		Lambda:  16,
+		SigSize: 3309,
+		Lambda:  24, // 2λ = 48 bytes c_tilde (FIPS 204)
 	}
 	MLDSA87 = &Params{
 		Name:    "ML-DSA-87",
@@ -65,7 +65,7 @@ var (
 		D:       13,
 		PKSize:  2592,
 		SKSize:  4896,
-		SigSize: 4595,
-		Lambda:  16,
+		SigSize: 4627,
+		Lambda:  32, // 2λ = 64 bytes c_tilde (FIPS 204)
 	}
 )

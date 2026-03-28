@@ -1,8 +1,8 @@
 package pqctls
 
 import (
-	"github.com/baron-chain/PQC-Standards-Implementation/go/composite"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/composite"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
 )
 
 // SignatureAlgorithm is a TLS 1.3 signature algorithm identifier for PQC.

@@ -2,7 +2,7 @@
 package encode
 
 import (
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/field"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/field"
 )
 
 // ByteEncode encodes an array of 256 field elements into a byte slice using d bits per element.

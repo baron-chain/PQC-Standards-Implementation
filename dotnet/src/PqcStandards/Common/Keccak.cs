@@ -144,11 +144,11 @@ public static class Keccak
 
     private static readonly int[] PiLane =
     [
-         0, 10,  7, 11, 17,
-        18,  3,  5, 16,  8,
-        21, 24,  4, 15, 23,
-         9, 13, 12, 20, 22,
-         1,  6, 19, 14,  2,
+         0, 10, 20,  5, 15,
+        16,  1, 11, 21,  6,
+         7, 17,  2, 12, 22,
+        23,  8, 18,  3, 13,
+        14, 24,  9, 19,  4,
     ];
 
     private static void KeccakF1600(Span<ulong> state)

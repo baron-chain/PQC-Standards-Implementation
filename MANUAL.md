@@ -95,8 +95,8 @@ assert!(verify::<MlDsa65>(&pk, b"hello world", &sig));
 // ML-KEM key exchange
 import (
     "crypto/rand"
-    "github.com/baron-chain/PQC-Standards-Implementation/go/mlkem"
-    "github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
+    "github.com/liviuepure/PQC-Standards-Implementation/go/mlkem"
+    "github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
 )
 
 ek, dk, _ := mlkem.KeyGen(params.MlKem768, rand.Reader)
@@ -107,7 +107,7 @@ recovered := mlkem.Decapsulate(params.MlKem768, dk, ct)
 
 ```go
 // ML-DSA signing
-import "github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
 
 pk, sk := mldsa.KeyGen(mldsa.MLDSA65)
 sig := mldsa.Sign(sk, []byte("hello world"), mldsa.MLDSA65)
@@ -288,8 +288,8 @@ Parameter sets are type-level: `MlKem512`, `MlKem768`, `MlKem1024`.
 
 ```go
 import (
-    "github.com/baron-chain/PQC-Standards-Implementation/go/mlkem"
-    "github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
+    "github.com/liviuepure/PQC-Standards-Implementation/go/mlkem"
+    "github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
 )
 
 // Parameter sets: params.MlKem512, params.MlKem768, params.MlKem1024
@@ -411,7 +411,7 @@ let valid: bool = verify::<MlDsa65>(&pk, message, &sig);
 #### Go
 
 ```go
-import "github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
 
 // Parameters: mldsa.MLDSA44, mldsa.MLDSA65, mldsa.MLDSA87
 pk, sk := mldsa.KeyGen(mldsa.MLDSA65)
@@ -550,7 +550,7 @@ let valid = verify::<SlhDsaShake128f, ShakeHash>(&pk, message, &sig);
 #### Go
 
 ```go
-import "github.com/baron-chain/PQC-Standards-Implementation/go/slhdsa"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/slhdsa"
 
 // Parameter sets: slhdsa.SHAKE128s, SHAKE128f, SHA2_128s, SHA2_128f, etc.
 pk, sk := slhdsa.KeyGen(slhdsa.SHAKE128f)
@@ -676,7 +676,7 @@ This ensures the combined secret depends on both components.
 #### Go
 
 ```go
-import "github.com/baron-chain/PQC-Standards-Implementation/go/hybrid"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/hybrid"
 
 // Schemes: hybrid.X25519MlKem768, EcdhP256MlKem768, X25519MlKem1024, EcdhP384MlKem1024
 kp, err := hybrid.KeyGen(hybrid.X25519MlKem768, rand.Reader)
@@ -763,7 +763,7 @@ Composite public keys are concatenated: `pk_classical || pk_pq`.
 #### Go
 
 ```go
-import "github.com/baron-chain/PQC-Standards-Implementation/go/composite"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/composite"
 
 // Schemes: composite.MlDsa65Ed25519, MlDsa65EcdsaP256, MlDsa87Ed25519, MlDsa44Ed25519
 kp := composite.KeyGen(composite.MlDsa65Ed25519)
@@ -861,7 +861,7 @@ The TLS integration layer provides three functions that map to the TLS 1.3 hands
 #### Step 1: Client generates a key share
 
 ```go
-import "github.com/baron-chain/PQC-Standards-Implementation/go/pqctls"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/pqctls"
 
 // Client: generate key share for ClientHello
 ks, err := pqctls.GenerateKeyShare(pqctls.X25519MLKEM768, rand.Reader)
@@ -1121,15 +1121,15 @@ Workspace features:
 
 ```bash
 # Add to your project
-go get github.com/baron-chain/PQC-Standards-Implementation/go@latest
+go get github.com/liviuepure/PQC-Standards-Implementation/go@latest
 
 # Import specific packages
-import "github.com/baron-chain/PQC-Standards-Implementation/go/mlkem"
-import "github.com/baron-chain/PQC-Standards-Implementation/go/mldsa"
-import "github.com/baron-chain/PQC-Standards-Implementation/go/slhdsa"
-import "github.com/baron-chain/PQC-Standards-Implementation/go/hybrid"
-import "github.com/baron-chain/PQC-Standards-Implementation/go/composite"
-import "github.com/baron-chain/PQC-Standards-Implementation/go/pqctls"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/mlkem"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/mldsa"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/slhdsa"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/hybrid"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/composite"
+import "github.com/liviuepure/PQC-Standards-Implementation/go/pqctls"
 
 # Run tests
 cd go
@@ -1228,7 +1228,7 @@ swift test
 
 # Add to your Package.swift
 dependencies: [
-    .package(url: "https://github.com/baron-chain/PQC-Standards-Implementation", from: "0.1.0"),
+    .package(url: "https://github.com/liviuepure/PQC-Standards-Implementation", from: "0.1.0"),
 ],
 targets: [
     .target(

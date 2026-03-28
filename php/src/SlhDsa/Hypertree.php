@@ -46,7 +46,8 @@ final class Hypertree
         // Sign at each subsequent layer
         for ($j = 1; $j < $d; $j++) {
             $idxLeaf = $idxTree & ((1 << $hPrime) - 1);
-            $idxTree >>= $hPrime;
+            // Unsigned right shift (PHP >> is arithmetic/sign-extending for negative ints)
+            $idxTree = ($idxTree >> $hPrime) & (PHP_INT_MAX >> ($hPrime - 1));
 
             $adrs->setLayerAddress($j);
             $adrs->setTreeAddress($idxTree);
@@ -91,7 +92,8 @@ final class Hypertree
         // Verify each subsequent layer
         for ($j = 1; $j < $d; $j++) {
             $idxLeaf = $idxTree & ((1 << $hPrime) - 1);
-            $idxTree >>= $hPrime;
+            // Unsigned right shift (PHP >> is arithmetic/sign-extending for negative ints)
+            $idxTree = ($idxTree >> $hPrime) & (PHP_INT_MAX >> ($hPrime - 1));
 
             $adrs->setLayerAddress($j);
             $adrs->setTreeAddress($idxTree);

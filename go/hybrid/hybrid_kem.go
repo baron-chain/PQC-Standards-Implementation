@@ -21,8 +21,8 @@ import (
 
 	"golang.org/x/crypto/sha3"
 
-	"github.com/baron-chain/PQC-Standards-Implementation/go/internal/params"
-	"github.com/baron-chain/PQC-Standards-Implementation/go/mlkem"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/internal/params"
+	"github.com/liviuepure/PQC-Standards-Implementation/go/mlkem"
 )
 
 // Scheme identifies a hybrid KEM scheme.
