@@ -34,7 +34,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: cd js && node --test test/
+      - run: cd js && node --test test/*.js
 
   python:
     name: Python Tests
@@ -44,6 +44,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: pip install cryptography
       - run: cd python && python3 -m unittest discover -s tests -v
 
   java:
