@@ -20,8 +20,8 @@ class SlhDsaTest extends TestCase
         $this->assertSame(16, $p['n']);
         $this->assertSame(33, $p['k']);
         $this->assertSame(6, $p['a']);
-        $this->assertSame(11, $p['layers']);
-        $this->assertSame(6, $p['tree_height']);
+        $this->assertSame(22, $p['layers']);
+        $this->assertSame(3, $p['tree_height']);
     }
 
     /**
